@@ -23,7 +23,7 @@
 						<div class="inner">
 
 							<!-- Logo -->
-								<a href="" class="logo">
+								<a href="../" class="logo">
 									<span class="symbol"><img src="/static/webtest/images/logo.svg" alt="" /></span><span class="title">Negotiatus</span>
 								</a>
 
@@ -43,29 +43,14 @@
 						<ul>
 							<li><a href="../">Home</a></li>
 							<li><a href="../new_order/">Add an order</a></li>
-							<li><a href="../seed_file/">Seed Database</a></li>
-							<li><a href="">Non-Delivered Orders</a></li>
+							<li><a href="">Seed Database</a></li>
+							<li><a href="../non_delivered/">Non-Delivered Orders</a></li>
 							<li><a href="../reports_delivered/">Reports</a></li>
 						</ul>
 					</nav>
 
 				<!-- Main -->
-					<div id="main">
-						<div class="inner">
-							<h1>Add a new order</h1>
-							<span class="image main"><img src="/static/webtest/images/orders.jpg" alt="" /></span>
-							<p>
-								<table>
-									<th>	
-										<td>No. Order</td><td>Vendor</td><td>No. Tracking</td><td>Delivered Date</td>
-									</th>
-									<tr>	
-										<td>No. Order</td><td>Vendor</td><td>No. Tracking</td><td>Delivered Date</td>
-									</tr>
-								</table>
-							</p>
-						</div>
-					</div>
+					{{ order_number }}
 
 				<!-- Footer -->
 					<footer id="footer">

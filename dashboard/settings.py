@@ -25,7 +25,8 @@ SECRET_KEY = '7@kd3g@f6$36be(&)77m_v9!l^b^f(g(y&io0nvzotf1*7ete4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ĺocalhost', '127.0.0.1']
+ALLOWED_HOSTS = ['ĺocalhost', '127.0.0.1', 'casierrav.pythonanywhere.com']
+GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyD6VoHk24yRLuFQOlorZGgU2ifIdHO_7ys'
 
 
 # Application definition
@@ -36,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
     'webtest',	
+    'geopy',
 ]
 
 MIDDLEWARE = [

@@ -23,7 +23,7 @@
 						<div class="inner">
 
 							<!-- Logo -->
-								<a href="" class="logo">
+								<a href="../" class="logo">
 									<span class="symbol"><img src="/static/webtest/images/logo.svg" alt="" /></span><span class="title">Negotiatus</span>
 								</a>
 
@@ -54,13 +54,10 @@
 						<div class="inner">
 							<h1>Add a new order</h1>
 							<p>
-								<form>
-									Order Number <input type="text" value="" > <br/>
-									Associated Vendor <input type="text" value="" ><br/>
-									Tracking Number <input type="text" value="" ><br/>
-									Address to Shipping <input type="text" value="" ><br/>
-									<input type="submit" value="Send" >
-								</form>
+							<form method="POST">{% csrf_token %}
+								{{ frmNewOrder.as_p }}
+								<input type="submit" value="Send" id="btnSend" name="btnSend">
+							</form>
 							</p>
 						</div>
 					</div>
