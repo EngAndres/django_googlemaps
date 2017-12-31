@@ -16,10 +16,12 @@ class NewOrder(forms.ModelForm):
 
     class Meta:
         model = Orders
-        fields = ('order_number','tracking_number','shipping_address')  
+        fields = ('order_number','vendor','tracking_number','shipping_address')  
 
 class UploadFile(forms.Form):
     file_upload = forms.FileField(label = "Select File")
+
+
 	
         
 

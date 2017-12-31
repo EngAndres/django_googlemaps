@@ -52,15 +52,21 @@
 				<!-- Main -->
 					<div id="main">
 						<div class="inner">
-							<h1>Index of Non-Delivered Orders</h1>
+							<h1>Report of Non Delivered Orders</h1>
 							<p>
 								<table>
-									<tr>	
-										<td>No. Order</td><td>Vendor</td><td>No. Tracking</td><td>Departed Date</td>
+								<tr>	
+									<td><h3>No. Order</h3></td><td><h3>Vendor</h3></td><td><h3>Shipping Address</h3></td><td><h3>Request Date</h3></td><td><h3>Delay</h3>
+								</tr>
+								{% for order in orders %}
+									<tr> 
+									    <td>{{ order.order_num }}</td>
+									    <td>{{ order.vendor }}</td>
+									    <td>{{ order.address }}</td>
+									    <td>{{ order.created }}</td>
+									    <td></td>	
 									</tr>
-									<tr>	
-										<td>No. Order</td><td>Vendor</td><td>No. Tracking</td><td>Departed Date</td>
-									</tr>
+								{% endfor %}
 								</table>
 							</p>
 						</div>

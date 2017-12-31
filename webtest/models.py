@@ -3,8 +3,6 @@ from django.utils import timezone
 from django.db import connection
 from geoposition.fields import GeopositionField
 
-class Location(models.Model):
-    position = GeopositionField()
 
 ############################# States #############################
 class StatesManager(models.Manager):
@@ -129,15 +127,15 @@ class OrdersManager():
     def get_orders_delivered(self):
         state_ = 3
         cursor = connection.cursor()
-        cursor.execute("SELECT webtest_orders.id AS id_, webtest_orders.order_number AS order_num, webtest_vendor.name AS vendor_, webtest_client.name AS client_, webtest_orders.shipping_address AS address_ FROM webtest_orders INNER JOIN webtest_client ON webtest_client.id = webtest_orders.client_fk_id INNER JOIN webtest_vendor ON webtest_vendor.id = webtest_orders.vendor_fk_id WHERE webtest_orders.state_fk_id=%s  ;", [state_])
+        cursor.execute("SELECT webtest_orders.id AS id_, webtest_orders.order_number AS order_num, webtest_vendor.name AS vendor_, webtest_client.name AS client_, webtest_orders.shipping_address AS address_, webtest_orders.delivered_date AS delivered_ FROM webtest_orders INNER JOIN webtest_client ON webtest_client.id = webtest_orders.client_fk_id INNER JOIN webtest_vendor ON webtest_vendor.id = webtest_orders.vendor_fk_id WHERE webtest_orders.state_fk_id=%s  ;", [state_])
         orders = cursor.fetchall()
         return orders
 
-    def get_orders_by_non_delivered(self):
+    def get_orders_non_delivered(self):
         state_1 = 1
         state_2 = 2
         cursor = connection.cursor()
-        cursor.execute("SELECT webtest_orders.id, webtest_orders.order_number, webtest_vendor.name, webtest_client.name, webtest_orders.shipping_address FROM webtest_orders INNER JOIN webtest_client ON webtest_client.id = webtest_orders.client_fk_id INNER JOIN webtest_vendor ON webtest_vendor.id = webtest_orders.vendor_fk_id WHERE webtest_orders.state_fk_id = %d OR webtest_orders.state_fk_id = %d;", [state_1, state_2])
+        cursor.execute("SELECT webtest_orders.id AS id_, webtest_orders.order_number AS order_num, webtest_vendor.name AS vendor_, webtest_client.name AS client_, webtest_orders.shipping_address AS address_, webtest_orders.created_date AS created_ FROM webtest_orders INNER JOIN webtest_client ON webtest_client.id = webtest_orders.client_fk_id INNER JOIN webtest_vendor ON webtest_vendor.id = webtest_orders.vendor_fk_id WHERE webtest_orders.state_fk_id = %s OR webtest_orders.state_fk_id = %s;", [state_1, state_2])
         orders = cursor.fetchall()
         return orders
 
@@ -146,7 +144,11 @@ class OrdersManager():
         cursor.execute("SELECT AVG(cast(( strftime('%s', delivered_date)-strftime('%s', created_date)) AS real)/60)FROM webtest_orders WHERE vendor_fk_id = %s AND state_fk_id = %s AND round(shipping_latitude, 2) = %s AND round(shipping_longitude,2) = %s;", [vendor_, state_, latitude_, longitude_]) 
         orders = cursor.fetchall()
         return orders
-	
+
+    def insert_order(self, order_number_, tracking_number_, vendor_, client_, shipping_address_, shipping_latitude_, shipping_longitude_, state_):
+        order = Orders(order_number = order_number_, tracking_number = tracking_number_, vendor_fk = vendor_, client_fk = client_, shipping_address = shipping_address_, shipping_latitude = shipping_latitude_, shipping_longitude = shipping_longitude_, state_fk = state_)
+        return order        
+
 
 class Orders(models.Model):
     order_number = models.IntegerField()
@@ -161,15 +163,8 @@ class Orders(models.Model):
     delivered_date = models.DateTimeField(null=True)
     orders = OrdersManager()
 
-    def insert_order(self, order_number_, vendor_, client_, shipping_address_, shipping_latitute_, shipping_longitude_, state_):
-        self.order_number = order_number_
-        self.vendor_fk = vendor_
-        self.client_fk = client_
-        self.shipping_address = shipping_address_
-        self.shipping_latitude = shipping_latitude_
-        self.shipping_longitude = shipping_longitude_
-        self.state_fk = state_
-        self.save()
+    
+
 
     
 

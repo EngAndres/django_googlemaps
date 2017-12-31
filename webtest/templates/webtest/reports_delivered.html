@@ -56,15 +56,14 @@
 							<p>
 								<table>
 								<tr>	
-									<td><h3>No. Order</h3></td><td><h3>Vendor</h3></td><td><h3>No. Tracking</h3></td><td><h3>Delivered Date</h3></td>
+									<td><h3>No. Order</h3></td><td><h3>Vendor</h3></td><td><h3>Shipping Address</h3></td><td><h3>Delivered Date</h3></td>
 								</tr>
-								
-								{% for order in orderss %}
+								{% for order in orders %}
 									<tr> 
-									    <td>{{ post.order_num }}</td>
-									    <td>{{ post.vendor_ }}</td>
-									    <td>{{ post.client_ }}</td>
-									    <td>{{ post.address_ }}</td>	
+									    <td>{{ order.order_num }}</td>
+									    <td>{{ order.vendor }}</td>
+									    <td>{{ order.address }}</td>
+									    <td>{{ order.delivered }}</td>	
 									</tr>
 								{% endfor %}
 								</table>
