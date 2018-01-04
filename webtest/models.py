@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from django.db import connection
-from geoposition.fields import GeopositionField
 
 
 ############################# States #############################
@@ -57,7 +56,7 @@ class VendorManager(models.Manager):
     
     def get_vendors(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT name, address, latitude, longitude, created_date FROM webtest_vendor;")
+        cursor.execute("SELECT id, name FROM webtest_vendor;")
         vendors = cursor.fetchall()
         return vendors
 
@@ -132,18 +131,26 @@ class OrdersManager():
         return orders
 
     def get_orders_non_delivered(self):
-        state_1 = 1
-        state_2 = 2
         cursor = connection.cursor()
-        cursor.execute("SELECT webtest_orders.id AS id_, webtest_orders.order_number AS order_num, webtest_vendor.name AS vendor_, webtest_client.name AS client_, webtest_orders.shipping_address AS address_, webtest_orders.created_date AS created_ FROM webtest_orders INNER JOIN webtest_client ON webtest_client.id = webtest_orders.client_fk_id INNER JOIN webtest_vendor ON webtest_vendor.id = webtest_orders.vendor_fk_id WHERE webtest_orders.state_fk_id = %s OR webtest_orders.state_fk_id = %s;", [state_1, state_2])
+        query = "SELECT webtest_orders.id AS id_, webtest_orders.order_number AS order_num, webtest_vendor.name AS vendor_, webtest_client.name AS client_, webtest_orders.shipping_address AS address_, webtest_orders.created_date AS created_, webtest_orders.shipping_latitude AS latitude_, webtest_orders.shipping_longitude AS longitude_, webtest_vendor.id AS vendor_id, (cast(( strftime('%s', 'now')-strftime('%s', webtest_orders.created_date)) AS real)/60) AS time_ FROM webtest_orders INNER JOIN webtest_client ON webtest_client.id = webtest_orders.client_fk_id INNER JOIN webtest_vendor ON webtest_vendor.id = webtest_orders.vendor_fk_id WHERE webtest_orders.state_fk_id = 1 OR webtest_orders.state_fk_id = 2;"
+        cursor.execute(query)
         orders = cursor.fetchall()
         return orders
 
-    def get_orders_average_time(self, vendor_, state_, latitude_, longitude_):
+    def get_orders_average_time(self, vendor_, latitude_, longitude_):
         cursor = connection.cursor()
-        cursor.execute("SELECT AVG(cast(( strftime('%s', delivered_date)-strftime('%s', created_date)) AS real)/60)FROM webtest_orders WHERE vendor_fk_id = %s AND state_fk_id = %s AND round(shipping_latitude, 2) = %s AND round(shipping_longitude,2) = %s;", [vendor_, state_, latitude_, longitude_]) 
+        query = "SELECT AVG(cast(( strftime('%s', delivered_date)-strftime('%s', created_date)) AS real)/60) FROM webtest_orders WHERE vendor_fk_id = " + str(vendor_) + " AND state_fk_id = 3 AND round(shipping_latitude, 2) = round(" + str(latitude_) + ", 2) AND round(shipping_longitude,2) = round(" + str(longitude_) + ", 2);"
+        cursor.execute(query) 
+        time = cursor.fetchall()
+        return time
+
+    def get_orders_by_constraint(self, constraint_):
+        cursor = connection.cursor()
+        query = "SELECT webtest_orders.id AS id_, webtest_orders.order_number AS order_num, webtest_vendor.name AS vendor_, webtest_client.name AS client_, webtest_orders.shipping_address AS address_, webtest_orders.created_date AS created_, webtest_orders.delivered_date AS delivered_,  (cast(( strftime('%s', 'now')-strftime('%s', webtest_orders.created_date)) AS real)/60) AS time_, webtest_orders.shipping_latitude AS latitude_, webtest_orders.shipping_longitude AS longitude_, webtest_vendor.id AS vendor_id FROM webtest_orders INNER JOIN webtest_client ON webtest_client.id = webtest_orders.client_fk_id INNER JOIN webtest_vendor ON webtest_vendor.id = webtest_orders.vendor_fk_id " + constraint_ + ";"
+        cursor.execute(query)
         orders = cursor.fetchall()
         return orders
+
 
     def insert_order(self, order_number_, tracking_number_, vendor_, client_, shipping_address_, shipping_latitude_, shipping_longitude_, state_):
         order = Orders(order_number = order_number_, tracking_number = tracking_number_, vendor_fk = vendor_, client_fk = client_, shipping_address = shipping_address_, shipping_latitude = shipping_latitude_, shipping_longitude = shipping_longitude_, state_fk = state_)

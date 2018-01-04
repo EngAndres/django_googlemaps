@@ -43,21 +43,21 @@
 						<ul>
 							<li><a href="../">Home</a></li>
 							<li><a href="../new_order/">Add an order</a></li>
-							<li><a href="">Seed Database</a></li>
+							<li><a href="../seed_file/">Seed Database</a></li>
 							<li><a href="../non_delivered/list/">Non-Delivered Orders</a></li>
-							<li><a href="../reports/">Reports</a></li>
+							<li><a href="">Reports</a></li>
 						</ul>
 					</nav>
 
 				<!-- Main -->
 					<div id="main">
 						<div class="inner">
-							<h1>Seed Database with a Seed File</h1>
+							<h1>Reports of Orders</h1>
 							<p>
-							<form method="POST" enctype="multipart/form-data">{% csrf_token %}
-								{{ frmUploadFile.as_p }}
-								<input type="submit" value="Upload" id="btnUpload" name="btnUpload">
-							</form>
+						            <form method="POST">{% csrf_token %}
+								{{ frmReports.as_p }}
+								<input type="submit" value="Send" id="btnSend" name="btnSend">
+							    </form>
 							</p>
 						</div>
 					</div>

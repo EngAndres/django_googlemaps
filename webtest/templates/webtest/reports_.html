@@ -43,21 +43,31 @@
 						<ul>
 							<li><a href="../">Home</a></li>
 							<li><a href="../new_order/">Add an order</a></li>
-							<li><a href="">Seed Database</a></li>
+							<li><a href="../seed_file/">Seed Database</a></li>
 							<li><a href="../non_delivered/list/">Non-Delivered Orders</a></li>
-							<li><a href="../reports/">Reports</a></li>
+							<li><a href="">Reports</a></li>
 						</ul>
 					</nav>
 
 				<!-- Main -->
 					<div id="main">
 						<div class="inner">
-							<h1>Seed Database with a Seed File</h1>
+							<h1>Report of Orders</h1>
 							<p>
-							<form method="POST" enctype="multipart/form-data">{% csrf_token %}
-								{{ frmUploadFile.as_p }}
-								<input type="submit" value="Upload" id="btnUpload" name="btnUpload">
-							</form>
+								<table>
+								<tr>	
+									<td><h3>No. Order</h3></td><td><h3>Vendor</h3></td><td><h3>Shipping Address</h3></td><td><h3>Created Date</h3></td><td><h3>Delivered Date</h3></td>
+								</tr>
+								{% for order in orders %}
+									<tr> 
+									    <td>{{ order.order_num }}</td>
+									    <td>{{ order.vendor }}</td>
+									    <td>{{ order.address }}</td>
+									    <td>{{ order.created }}</td>
+                                                                            <td>{{ order.delivered }}</td>	
+									</tr>
+								{% endfor %}
+								</table>
 							</p>
 						</div>
 					</div>

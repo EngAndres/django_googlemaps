@@ -23,7 +23,7 @@
 						<div class="inner">
 
 							<!-- Logo -->
-								<a href="../" class="logo">
+								<a href="../../" class="logo">
 									<span class="symbol"><img src="/static/webtest/images/logo.svg" alt="" /></span><span class="title">Negotiatus</span>
 								</a>
 
@@ -41,11 +41,11 @@
 					<nav id="menu">
 						<h2>Menu</h2>
 						<ul>
-							<li><a href="../">Home</a></li>
-							<li><a href="../new_order/">Add an order</a></li>
-							<li><a href="../seed_file/">Seed Database</a></li>
+							<li><a href="../../">Home</a></li>
+							<li><a href="../../new_order/">Add an order</a></li>
+							<li><a href="../../seed_file/">Seed Database</a></li>
 							<li><a href="">Non-Delivered Orders</a></li>
-							<li><a href="../reports_delivered/">Reports</a></li>
+							<li><a href="../../reports/">Reports</a></li>
 						</ul>
 					</nav>
 
@@ -53,7 +53,8 @@
 					<div id="main">
 						<div class="inner">
 							<h1>Report of Non Delivered Orders</h1>
-							<p>
+                                                        <h3><a href="../map/"><i>(View Map)</i></a></h3>
+                                                        <p>
 								<table>
 								<tr>	
 									<td><h3>No. Order</h3></td><td><h3>Vendor</h3></td><td><h3>Shipping Address</h3></td><td><h3>Request Date</h3></td><td><h3>Delay</h3>
@@ -64,7 +65,7 @@
 									    <td>{{ order.vendor }}</td>
 									    <td>{{ order.address }}</td>
 									    <td>{{ order.created }}</td>
-									    <td></td>	
+									    <td>{{ order.delay }}</td>	
 									</tr>
 								{% endfor %}
 								</table>

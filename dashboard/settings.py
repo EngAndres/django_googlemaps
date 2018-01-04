@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'webtest',	
     'geopy',
+    'django_google_maps',
 ]
 
 MIDDLEWARE = [

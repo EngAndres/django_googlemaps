@@ -11,7 +11,3 @@ admin.site.register(Client)
 admin.site.register(Vendor)
 admin.site.register(Tracking)
 admin.site.register(Orders)
-
-
-
-
