@@ -1,3 +1,15 @@
+'''
+# Solution for Software Delevopment Test.
+#
+# Created by MSc. Carlos Andres Sierra on February 2018.
+# Copyright (c) 2018  Msc. Carlos Andres Sierra.  All rights reserved.
+#
+# This file is part of NegotiatusDashboardProject.
+#
+# NegotiatusDashboardProject is free software: you can redistribute it and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation, version 3.
+'''
+
 """dashboard URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -13,6 +25,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
