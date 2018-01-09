@@ -48,7 +48,7 @@ def new_order(request):
             #get geographic information based on the given address
             location = geolocator.geocode( request.POST.get("shipping_address") ) 
 
-            #There is issues with the address, and if GeoPy can process the address (no valid format), 
+            #There are issues with the address, and if GeoPy can't process the address (no valid format), 
             #it returns a None value
             if location is not None:
                 order.shipping_latitude = location.latitude
@@ -70,45 +70,53 @@ def new_order(request):
 
 
 
-#
+#This method is used to process a file with a data-structure defined and seed the database with each register in the file
 def upload_seed_file(file_):
-    for line in file_:
-        order = str(line).split("'")[1].split(",")
-        order_number_ = order[0]
-        tracking_number_ = order[3]
+    for line in file_: #move by each line of the file
+        order = str(line).split("'")[1].split(",") #remove meta of the file that is not useful
+        
+        #for this example, it is assumed a data-structure as follows: order_number,vendor_id,state_id,tracking_number,shipping_address 
+        order_number_ = order[0] 
         vendor_ = order[1]
-        client_ = '1'
-        shipping_address_ = order[4].replace("\\r\\n", "")
-
-        geolocator = Nominatim()
+        state_ = order[2]
+        tracking_number_ = order[3]
+        shipping_address_ = order[4].replace("\\r\\n", "") #remove tags for end of line
+        client_ = '1' #generic client defined for this version
+        
+        geolocator = Nominatim() #object to work with geoposition
+        
+        #get geographic information based on the given address
         location = geolocator.geocode( shipping_address_ )
 
-        if location is not None:
+        #There are issues with the address, and if GeoPy can't process the address (no valid format), 
+        #it returns a None value
+        if location is not None: #assign right coordenates information
             shipping_latitude_ = location.latitude
             shipping_longitude_ = location.longitude
-        else:
+        else: #logic invalid values to latitude and longitude are defined, this must be fixed trying to standarize the address in the form
             shipping_latitude_ = '0.0'
             shipping_longitude_ = '0.0'
 		
-        state_ = order[2]
         
+        #Once all register information is set, it is time to save this register in the database
         order = Orders.orders.insert_order(order_number_, tracking_number_, Vendor.objects.get(id = vendor_), Client.objects.get(id = client_), shipping_address_, shipping_latitude_, shipping_longitude_, States.objects.get(id =  state_))
         order.save()
-        time.sleep(0.1)
+        time.sleep(0.15) #This delay try to avoid the problem of saturate GeoPy service. TODO improve it
 
 
 
-#
+#Seed file view. In this method we request a file to the user, this file has seed information to seed the database.
 def seedfile(request):
-    if request.method == 'POST':
-        frmUploadFile = UploadFile(request.POST, request.FILES)
+    if request.method == 'POST': #verify if a form has been sent
+        frmUploadFile = UploadFile(request.POST, request.FILES) #save information of the form, in this case, the file uploaded.
 
-        if frmUploadFile.is_valid():
-            upload_seed_file(request.FILES['file_upload'])
+        if frmUploadFile.is_valid(): #avoid errors
+            upload_seed_file(request.FILES['file_upload']) #call to funtion to process the uploaded file
         	    
-    frmUploadFile = UploadFile()
+    frmUploadFile = UploadFile() #create a new form to be send as parameter of the view
 
     return render(request, 'webtest/seed_file.html',{'frmUploadFile':frmUploadFile})
+
 
 
 # This method is used to define a delay classification based on a factor of the shipping time for the current order and 
@@ -123,21 +131,27 @@ def calculate_delay(factor):
             return "Very Late" #It is later than average time and it isn't acceptable    
 
 
+
 #Non-delivered list view. In this method is building a list of a non-delivered orders, and the list is sent to a 
 #web page to be showed in a table.
 def nondelivered_list(request):
-    temp = Orders.orders.get_orders_non_delivered()
+    temp = Orders.orders.get_orders_non_delivered() #call to a query that returns all orders that has not been delivered
+   
+    #save query information in an array of Python dictionaries; one dictionary per each order
     orders = [{'id':element[0], 'order_num':element[1], 'vendor':element[2], 'client':element[3], 'address':element[4], 'created':element[5], 'latitude':element[6], 'longitude':element[7], 'vendor_id':element[8], 'time':element[9]} for element in temp]    
 
-    for order in orders:
+    for order in orders: #move by each order
+        #Call to a query that get an average delivered time between a vendor and a defined geographic location (even a little neighborhood)s
         average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
 
+        #If there is not coincidences of previous deliveries of the vendor and the location given, query result will be "None"
         if average[0][0] is None:
-            order['delay'] = "---"
+            order['delay'] = "---" #There is no message to show 
         else:
-            factor = order['time'] / average[0][0]
-            order['delay'] = calculate_delay(factor)
-            
+            #There are previous coincidences
+            #A factor is defined to compare the average time with the delivery time with the current orders
+            factor = order['time'] / average[0][0] #This is a simple way to make a correlation between these values
+            order['delay'] = calculate_delay(factor) #Call to a function that returns a message based on the factor obtained
         
     return render(request, 'webtest/non_delivered.html',{'orders':orders})
 
@@ -160,7 +174,7 @@ def define_icon(delay):
 #web page to be showed in a table.
 def nondelivered_map(request):
     temp = Orders.orders.get_orders_non_delivered()
-    orders = [{'id':element[0], 'order_num':("Order Number: "+ element[1]), 'vendor':("Vendor: " + element[2]), 'client':element[3], 'address':("Address: " + element[4]), 'created':element[5], 'latitude':element[6], 'longitude':element[7], 'vendor_id':element[8], 'time':element[9]} for element in temp]    
+    orders = [{'id':element[0], 'order_num':("Order Number: "+ str(element[1])), 'vendor':("Vendor: " + element[2]), 'client':element[3], 'address':("Address: " + element[4]), 'created':element[5], 'latitude':element[6], 'longitude':element[7], 'vendor_id':element[8], 'time':element[9]} for element in temp]    
 
     for order in orders:
         average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
@@ -170,6 +184,52 @@ def nondelivered_map(request):
         order['icon'] = define_icon(order['delay'])
         
     return render(request, 'webtest/non_delivered_maps.html',{'orders':orders})
+
+
+
+
+#
+def orders_filtered(constraint, type_):
+    temp = Orders.orders.get_orders_by_constraint(constraint)
+    orders_ = [{'id':element[0], 'order_num':element[1], 'vendor':element[2], 'client':element[3], 'address':element[4], 'created':element[5], 'delivered':element[6], 'time':element[7], 'latitude':element[8], 'longitude':element[9], 'vendor_id':element[10]} for element in temp]    
+
+    if  type_ == 1 or type_ == '3':
+        for order in orders_:
+            if order['delivered'] is None:                
+                average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
+
+                factor = 0 if average[0][0] is None else order['time'] / average[0][0]
+                order['delivered'] = calculate_delay(factor)
+
+        return orders_
+    else:
+        filtered = []            
+        if type_ == '4':
+            for order in orders_:
+                average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
+
+                factor = 0 if average[0][0] is None else order['time'] / average[0][0]
+                if factor < 1.0:
+                     order['delivered'] = "Normal"
+                     filtered.append(order)
+        else:  
+            if type_ == '5':
+                for order in orders_:
+                    average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
+
+                    factor = 0 if average[0][0] is None else order['time'] / average[0][0]
+                    if factor < factor_very_late and factor >= 1.0:
+                        order['delivered'] = "Not Normal"
+                        filtered.append(order)
+            else:
+                for order in orders_:
+                    average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
+
+                    factor = 0 if average[0][0] is None else order['time'] / average[0][0]
+                    if factor >= factor_very_late:
+                        order['delivered'] = "Very Late"
+                        filtered.append(order)
+        return filtered
 
 
 
@@ -201,49 +261,9 @@ def reports(request):
             if len(constraint) > 0:
                 constraint = " WHERE " + constraint
 
-        temp = Orders.orders.get_orders_by_constraint(constraint)
-        orders_ = [{'id':element[0], 'order_num':element[1], 'vendor':element[2], 'client':element[3], 'address':element[4], 'created':element[5], 'delivered':element[6], 'time':element[7], 'latitude':element[8], 'longitude':element[9], 'vendor_id':element[10]} for element in temp]    
+        orders = orders_filtered(constraint, type_)         
 
-        if  type_ == 1 or type_ == '3':
-            for order in orders_:
-                if order['delivered'] is None:                
-                    average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
-
-                    factor = 0 if average[0][0] is None else order['time'] / average[0][0]
-                    order['delivered'] = calculate_delay(factor)
-
-            parameter = []
-            parameter = orders_
-        else:
-            if type_ != '3':
-                parameter = []            
-                if type_ == '4':
-                    for order in orders_:
-                        average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
-
-                        factor = 0 if average[0][0] is None else order['time'] / average[0][0]
-                        if factor < 1.0:
-                             order['delivered'] = "Normal"
-                             parameter.append(order)
-                else:  
-                    if type_ == '5':
-                        for order in orders_:
-                            average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
-
-                            factor = 0 if average[0][0] is None else order['time'] / average[0][0]
-                            if factor < 1.25 and factor >= 1.0:
-                                order['delivered'] = "Not Normal"
-                                parameter.append(order)
-                    else:
-                        for order in orders_:
-                            average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])
-
-                            factor = 0 if average[0][0] is None else order['time'] / average[0][0]
-                            if factor >= 1.25:
-                                order['delivered'] = "Very Late"
-                                parameter.append(order)
-
-        return render(request, 'webtest/reports_.html',{'orders':parameter, 'type':type_})
+        return render(request, 'webtest/reports_.html',{'orders':orders, 'type':type_})
     else:
         frmReports = ReportFilter()
 
