@@ -21,6 +21,7 @@
 	<head>
 		<title>Negotiatus</title>
 		<meta charset="utf-8" />
+		<link rel="shortcut icon" href="/static/webtest/images/negotiatus.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="/static/webtest/assets/css/main.css" />
@@ -37,117 +38,109 @@
 	</head>
 	<body>
 		<!-- Wrapper -->
-			<div id="wrapper">
+		<div id="wrapper">
 
-				<!-- Header -->
-					<header id="header">
-						<div class="inner">
+			<!-- Header -->
+			<header id="header">
+				<div class="inner">
 
-							<!-- Logo -->
-								<a href="../../" class="logo">
-									<span class="symbol"><img src="/static/webtest/images/logo.svg" alt="" /></span><span class="title">Negotiatus</span>
-								</a>
+					<!-- Logo -->
+					<a href="../../" class="logo">
+						<span class="symbol"><img src="/static/webtest/images/logo.svg" alt="" /></span>
+						<span class="title">Negotiatus</span>
+					</a>
 
-							<!-- Nav -->
-								<nav>
-									<ul>
-										<li><a href="#menu">Menu</a></li>
-									</ul>
-								</nav>
-
-						</div>
-					</header>
-
-				<!-- Menu -->
-					<nav id="menu">
-						<h2>Menu</h2>
+					<!-- Nav -->
+					<nav>
 						<ul>
-							<li><a href="../../">Home</a></li>
-							<li><a href="../../new_order/">Add an order</a></li>
-							<li><a href="../../seed_file/">Seed Database</a></li>
-							<li><a href="">Non-Delivered Orders</a></li>
-							<li><a href="../../reports/">Reports</a></li>
+							<li><a href="#menu">Menu</a></li>
 						</ul>
 					</nav>
+				</div>
+			</header>
 
-				<!-- Main -->
-					<div id="main">
-						<div class="inner">
-							<h1>Report of Non Delivered Orders</h1>
-                                                        <h3><a href="../list/"><i>(View List)</i></a></h3>
-                                                        <p>
-<div id="map"></div>
-    <script>
-      var locations = [
-	{% for order in orders %}
-	    [{ lat: {{ order.latitude }} , lng:  {{ order.longitude }} }, "{{ order.order_num }}", "{{ order.icon }}",],
-	{% endfor %}        
+			<!-- Menu -->
+			<nav id="menu">
+				<h2>Menu</h2>
+				<ul>
+					<li><a href="../../">Home</a></li>
+					<li><a href="../../new_order/">Add an order</a></li>
+					<li><a href="../../seed_file/">Seed Database</a></li>
+					<li><a href="">Non-Delivered Orders</a></li>
+					<li><a href="../../reports/">Reports</a></li>
+				</ul>
+			</nav>
 
-      ]
+			<!-- Main -->
+			<div id="main">
+			<div class="inner">
+				<h1>Report of Non Delivered Orders</h1>
+				<h3><a href="../list/"><i>(View List)</i></a></h3>
+				<p>
+					<div id="map"></div>
+    					<script>
+      						var locations = [
+							{% for order in orders %}
+	    							[{ lat: {{ order.latitude }} , lng:  {{ order.longitude }} }, "{{ order.order_num }}", "{{ order.icon }}", ( '<div id="content"><div id="bodyContent"><b>{{ order.order_num }} </b></br><i>Vendor:</i>  {{ order.vendor }}</br><i>Shipping Address:</i>      {{ order.address }}</br><i>Date of Request:</i>   {{ order.created }}</br><i>Delivery State:</i>  {{ order.delay }}</div></div>')],
+							{% endfor %}        
+						]
 
+						function initMap() {
+        						var center = {lat: 40.7829, lng: -73.9654};
+        						var map = new google.maps.Map(document.getElementById('map'), {
+								zoom: 4,
+								center: center
+							});
 
-      function initMap() {
-        var center = {lat: 40.7829, lng: -73.9654};
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 4,
-          center: center
-        });
+        						var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+        						var markers = locations.map(function(location, i) {
+          							var infowindow = new google.maps.InfoWindow({
+									content: location[3]
+								});
+								var marker = new google.maps.Marker({
+									position: location[0],
+									label: labels[i % labels.length],
+									title:location[1],
+									icon: location[2],
+								});
+          							marker.addListener('click', function() {
+             								infowindow.open(map, marker);
+								});
 
+								return marker
+							});
 
-        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-
-        var markers = locations.map(function(location, i) {
-          return new google.maps.Marker({
-            position: location[0],
-            label: labels[i % labels.length],
-            title:location[1],
-            icon: location[2],
-          });
-        });
-
-        // Add a marker clusterer to manage the markers.
-        var markerCluster = new MarkerClusterer(map, markers,
-            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-      }
-
-      
-
-
-    </script>
-    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-    </script>
-
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdb4Be2mUD-nQZH648CbRD4ETmyQFglVA&callback=initMap">
-    </script>
-	
-
-								
-							</p>
-						</div>
-					</div>
-
-				<!-- Footer -->
-					<footer id="footer">
-						<div class="inner">
-							
-							
-							<ul class="copyright">
-								<li>&copy; Carlos Sierra. All rights reserved</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-							</ul>
-						</div>
-					</footer>
-
+        						// Add a marker clusterer to manage the markers.
+        						var markerCluster = new MarkerClusterer(map, markers,
+            							{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+						}
+    					</script>
+    					<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    					</script>	
+					<script async defer
+						src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdb4Be2mUD-nQZH648CbRD4ETmyQFglVA&callback=initMap">
+					</script>
+				</p>
+			</div>
 			</div>
 
-		<!-- Scripts -->
-			<script src="/static/webtest/assets/js/jquery.min.js"></script>
-			<script src="/static/webtest/assets/js/skel.min.js"></script>
-			<script src="/static/webtest/assets/js/util.js"></script>
-			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
-			<script src="/static/webtest/assets/js/main.js"></script>
+			<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<ul class="copyright">
+						<li>&copy; Carlos Sierra. All rights reserved</li>
+						<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+		</div>
 
+		<!-- Scripts -->
+		<script src="/static/webtest/assets/js/jquery.min.js"></script>
+		<script src="/static/webtest/assets/js/skel.min.js"></script>
+		<script src="/static/webtest/assets/js/util.js"></script>
+		<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+		<script src="/static/webtest/assets/js/main.js"></script>
 	</body>
 </html>

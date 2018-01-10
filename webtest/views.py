@@ -157,16 +157,15 @@ def nondelivered_list(request):
 
 
 
-#
+#This method is used to define an icon depending of the delay of the order.
 def define_icon(delay):
-    if delay == "Normal":
+    if delay == "Normal": #Green, it is in a good time
         return "https://raw.githubusercontent.com/EngAndres/negotiatus_test/master/webtest/static/webtest/images/icons/green_map-marker.png"
     else:
-        if delay == "Not Normal":
+        if delay == "Not Normal": #Orange, not normal time for delivery
             return "https://raw.githubusercontent.com/EngAndres/negotiatus_test/master/webtest/static/webtest/images/icons/orange_map-marker.png"
-        else:
+        else: #Red, very late time to delivery
             return "https://raw.githubusercontent.com/EngAndres/negotiatus_test/master/webtest/static/webtest/images/icons/red_map-marker.png"
-
 
 
 
@@ -174,7 +173,8 @@ def define_icon(delay):
 #web page to be showed in a table.
 def nondelivered_map(request):
     temp = Orders.orders.get_orders_non_delivered()
-    orders = [{'id':element[0], 'order_num':("Order Number: "+ str(element[1])), 'vendor':("Vendor: " + element[2]), 'client':element[3], 'address':("Address: " + element[4]), 'created':element[5], 'latitude':element[6], 'longitude':element[7], 'vendor_id':element[8], 'time':element[9]} for element in temp]    
+    
+    orders = [{'id':element[0], 'order_num':("Order Number: " + str(element[1])), 'vendor':element[2], 'created':element[5], 'address':element[4] ,'latitude':element[6], 'longitude':element[7], 'vendor_id':element[8], 'time':element[9]} for element in temp]    
 
     for order in orders:
         average = Orders.orders.get_orders_average_time(order['vendor_id'], order['latitude'], order['longitude'])

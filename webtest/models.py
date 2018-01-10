@@ -15,25 +15,21 @@ from django.utils import timezone
 from django.db import connection
 
 
-############################# States #############################
+############################# States Model #############################
+#Manager of the model States
 class StatesManager(models.Manager):
+    #Query to get general information of vendors. It will be used to feed Django forms
     def get_states(self):
         cursor = connection.cursor()
         cursor.execute("SELECT id AS id_state, name AS state_name FROM webtest_states;")
         states = cursor.fetchall()
         return states
 
+#State class. This class represents the information about delivery state
 class States(models.Model):
-    name = models.TextField(unique = True)
+    name = models.TextField(unique = True) 
     states = StatesManager()
     objects = models.Manager()
-
-    def getName(self):
-        self.name
-
-    def insertName(self, name_):
-        self.name = name_
-        self.save()
 
     def __str__(self):
         return self.name
@@ -56,8 +52,11 @@ class Client(models.Model):
     clients = ClientManager()
     objects = models.Manager()
 
-    
+    def __str__(self):
+        toString = self.name
+        return toString
 
+    
 
 
 ############################# Vendor #############################
@@ -97,7 +96,6 @@ class Vendor(models.Model):
     def __str__(self):
         toString = self.name + ", " + self.address
         return toString
-
 
 
 
@@ -163,7 +161,6 @@ class OrdersManager():
         orders = cursor.fetchall()
         return orders
 
-
     def insert_order(self, order_number_, tracking_number_, vendor_, client_, shipping_address_, shipping_latitude_, shipping_longitude_, state_):
         order = Orders(order_number = order_number_, tracking_number = tracking_number_, vendor_fk = vendor_, client_fk = client_, shipping_address = shipping_address_, shipping_latitude = shipping_latitude_, shipping_longitude = shipping_longitude_, state_fk = state_)
         return order        
@@ -182,13 +179,12 @@ class Orders(models.Model):
     delivered_date = models.DateTimeField(null=True)
     orders = OrdersManager()
 
-    
+    def __str__(self):
+        toString = self.order_number + ", " + self.shipping_address
+        return toString
 
 
     
-
-
-
 
 ############################# Tracking #############################
 class Tracking(models.Model):

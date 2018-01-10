@@ -4,10 +4,24 @@
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
+
+<!--
+# Solution for Software Delevopment Test.
+#
+# Created by MSc. Carlos Andres Sierra on February 2018.
+# Copyright (c) 2018  Msc. Carlos Andres Sierra.  All rights reserved.
+#
+# This file is part of NegotiatusDashboardProject.
+#
+# NegotiatusDashboardProject is free software: you can redistribute it and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation, version 3.
+-->
+
 <html>
 	<head>
 		<title>Negotiatus</title>
 		<meta charset="utf-8" />
+		<link rel="shortcut icon" href="/static/webtest/images/negotiatus.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="/static/webtest/assets/css/main.css" />
@@ -15,72 +29,70 @@
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 	</head>
 	<body>
-		<!-- Wrapper -->
-			<div id="wrapper">
+	<!-- Wrapper -->
+		<div id="wrapper">
 
-				<!-- Header -->
-					<header id="header">
-						<div class="inner">
+			<!-- Header -->
+			<header id="header">
+				<div class="inner">
 
-							<!-- Logo -->
-								<a href="../" class="logo">
-									<span class="symbol"><img src="/static/webtest/images/logo.svg" alt="" /></span><span class="title">Negotiatus</span>
-								</a>
+					<!-- Logo -->
+					<a href="../" class="logo">
+						<span class="symbol"><img src="/static/webtest/images/logo.svg" alt="" /></span>
+						<span class="title">Negotiatus</span>
+					</a>
 
-							<!-- Nav -->
-								<nav>
-									<ul>
-										<li><a href="#menu">Menu</a></li>
-									</ul>
-								</nav>
-
-						</div>
-					</header>
-
-				<!-- Menu -->
-					<nav id="menu">
-						<h2>Menu</h2>
+					<!-- Nav -->
+					<nav>
 						<ul>
-							<li><a href="../">Home</a></li>
-							<li><a href="../new_order/">Add an order</a></li>
-							<li><a href="../seed_file/">Seed Database</a></li>
-							<li><a href="../non_delivered/list/">Non-Delivered Orders</a></li>
-							<li><a href="">Reports</a></li>
+							<li><a href="#menu">Menu</a></li>
 						</ul>
 					</nav>
+				</div>
+			</header>
 
-				<!-- Main -->
-					<div id="main">
-						<div class="inner">
-							<h1>Reports of Orders</h1>
-							<p>
-						            <form method="POST">{% csrf_token %}
-								{{ frmReports.as_p }}
-								<input type="submit" value="Send" id="btnSend" name="btnSend">
-							    </form>
-							</p>
-						</div>
-					</div>
+			<!-- Menu -->
+			<nav id="menu">
+				<h2>Menu</h2>
+				<ul>
+					<li><a href="../">Home</a></li>
+					<li><a href="../new_order/">Add an order</a></li>
+					<li><a href="../seed_file/">Seed Database</a></li>
+					<li><a href="../non_delivered/list/">Non-Delivered Orders</a></li>
+					<li><a href="">Reports</a></li>
+				</ul>
+			</nav>
 
-				<!-- Footer -->
-					<footer id="footer">
-						<div class="inner">
-							
-							
-							<ul class="copyright">
-								<li>&copy; Carlos Sierra. All rights reserved</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-							</ul>
-						</div>
-					</footer>
-
+			<!-- Main -->
+			<div id="main">
+			<div class="inner">
+				<h1>Reports of Orders</h1>
+				<p>
+					<form method="POST">{% csrf_token %}
+						{{ frmReports.as_p }}
+						<input type="submit" value="Send" id="btnSend" name="btnSend">
+					</form>
+				</p>
+			</div>
 			</div>
 
+			<!-- Footer -->
+			<footer id="footer">
+			<div class="inner">
+				<ul class="copyright">
+					<li>&copy; Carlos Sierra. All rights reserved</li>
+					<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+				</ul>
+			</div>
+			</footer>
+		</div>
+
 		<!-- Scripts -->
-			<script src="/static/webtest/assets/js/jquery.min.js"></script>
-			<script src="/static/webtest/assets/js/skel.min.js"></script>
-			<script src="/static/webtest/assets/js/util.js"></script>
-			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
-			<script src="/static/webtest/assets/js/main.js"></script>
+		<script src="/static/webtest/assets/js/jquery.min.js"></script>
+		<script src="/static/webtest/assets/js/skel.min.js"></script>
+		<script src="/static/webtest/assets/js/util.js"></script>
+		<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+		<script src="/static/webtest/assets/js/main.js"></script>
 
 	</body>
 </html>
